@@ -85,8 +85,25 @@ window_size <- 8*30000   ### from Su et al Science 1999, 15
 tot_genome <- 23000000
 sliding_window_hetz <- matrix(0,nrow=(tot_genome/window_size),ncol=length(colnames(Cross_SNPs@gt[,-1])))
 
-### Find SNPs that most closely match window size
+### Find SNPs that most closely match window size by chromosome
 chrom <- unique(Parental_homozySNPs[,"CHROM"])
+chrom_length <- c(643292,947102,1060087,1204112,1343552,1418244,1501717,1419563,1541723,1687655,2038337,2271478,2895605,3281971)  ### lengths for 3D7 pulled from http://www.genome.jp/kegg-bin/show_organism?org=pfa
+a <- c(1)
+chrom_count <- 1
+
+while(chrom_count <= 14){
+  if(a[length(a)] + window_size < chrom_length[chrom_count]){
+    a[[length(a)+1]] <- a[length(a)] + window_size
+    print("incrementing a within chrom")
+  }
+  if(a[length(a)] + window_size >= chrom_length[chrom_count]){
+    a[[length(a)+1]] <- chrom_length[chrom_count]
+    a[[length(a)+1]] <- 1
+    chrom_count <- chrom_count + 1
+    print("incrementing chrom")
+  }
+}
+
 
 for(i in 1:dim(sliding_window_hetz)[1]){
   for(j in 2:length(colnames(Cross_SNPs@gt))){
