@@ -56,7 +56,7 @@ rownames(het_counts)[which(het_counts>700)]
 
 ### Sliding window size of average cross over to look for above average number of mutations
 ### From histogram, take 130 as our average heterozygous error rate for this 
-window_size = 30
+window_size = 64
 sliding_window_hetz <- matrix(0,nrow=dim(Parental_homozySNPs)[1]/window_size,ncol=length(colnames(Cross_SNPs@gt[,-1])))
 
 for(i in 1:dim(sliding_window_hetz)[1]){
@@ -69,6 +69,39 @@ colnames(sliding_window_hetz) <- colnames(Cross_SNPs@gt[,-1])
 
 hist(sliding_window_hetz,breaks=30)
 boxplot(sliding_window_hetz,ylab="Number of SNPs in 30 SNP sliding window",xlab="Samples")
+
+### HeatMap of genome scan
+
+library(RColorBrewer)
+library(gplots)
+library(vegan)
+library(grDevices)
+
+## Make vector of colors for values below threshold
+rc1 <- colorpanel(8,"yellow", "darkyellow")
+## Make vector of colors for values above threshold
+rc2 <- colorpanel(8,"pink", "darkred")
+rampcols <- c(rc1, rc2)
+## In your example, this line sets the color for values between 49 and 51. 
+#rampcols[c(-nHalf, nHalf+1)] <- rgb(t(col2rgb("green")), maxColorValue=256) 
+rb1 <- seq(0, (2*1/window_size), length.out=8)
+rb2 <- seq((2*1/window_size), 1, length.out=8)[-1]
+rampbreaks <- c(-4,rb1,rb2,4)
+
+
+mat <- sliding_window_hetz
+
+png("HetScanMap.png", height=20, width=24, units="in", res=220)
+par(oma=c(0,0,0,0))
+
+heatmap.2(mat, Rowv=FALSE, Colv=FALSE, dendrogram="none", 
+          trace="none", density="none", scale="none",col = rampcols, 
+          breaks = rampbreaks, cexRow=1,cexCol=1,na.rm=TRUE,na.color="grey90",
+          key=FALSE,margins=c(5, 15), srtCol=360, labCol=NULL, labRow=NULL)
+
+legend(0,1,c("background error","above background heterzygousity","high heterozygosity"),col=c("yellow","pink","dark red"),pch=c(15,15,15),bty="n",y.intersp=1,cex=1.5)
+
+dev.off()
 
 
 ### Check which columns have the maximum heterozygous counts for a window above expected
