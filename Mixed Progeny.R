@@ -22,7 +22,7 @@ for(i in 1:length(Cross_SNPs@gt[,"Sample_ART-1"])){
 }
 
 ### SNPs where Parents 1 and 2 are homozygotes	
-Parental_SNPs <- which((Parent1_GT=="0/0"|Parent1_GT=="1/1")&(Parent2_GT=="0/0"|Parent2_GT=="1/1"))
+Parental_SNPs <- which((Parent1_GT=="0/0"|Parent1_GT=="1/1"|Parent1_GT=="0/1"|Parent1_GT=="1/0")&(Parent2_GT=="0/0"|Parent2_GT=="1/1"|Parent2_GT=="1/0"|Parent2_GT=="0/1"))
 
 
 ### Store parental genotypes at SNPs where parents meet this above condition
@@ -56,7 +56,7 @@ rownames(het_counts)[which(het_counts>700)]
 
 ### Sliding window size of average cross over to look for above average number of mutations
 ### From histogram, take 130 as our average heterozygous error rate for this 
-window_size = 64
+window_size = 40
 sliding_window_hetz <- matrix(0,nrow=dim(Parental_homozySNPs)[1]/window_size,ncol=length(colnames(Cross_SNPs@gt[,-1])))
 
 for(i in 1:dim(sliding_window_hetz)[1]){
@@ -78,9 +78,9 @@ library(vegan)
 library(grDevices)
 
 ## Make vector of colors for values below threshold
-rc1 <- colorpanel(8,"yellow", "darkyellow")
+rc1 <- colorpanel(8,"yellow", "yellow")
 ## Make vector of colors for values above threshold
-rc2 <- colorpanel(8,"pink", "darkred")
+rc2 <- colorpanel(8,"lightblue", "darkblue")
 rampcols <- c(rc1, rc2)
 ## In your example, this line sets the color for values between 49 and 51. 
 #rampcols[c(-nHalf, nHalf+1)] <- rgb(t(col2rgb("green")), maxColorValue=256) 
@@ -99,7 +99,7 @@ heatmap.2(mat, Rowv=FALSE, Colv=FALSE, dendrogram="none",
           breaks = rampbreaks, cexRow=1,cexCol=1,na.rm=TRUE,na.color="grey90",
           key=FALSE,margins=c(5, 15), srtCol=360, labCol=NULL, labRow=NULL)
 
-legend(0,1,c("background error","above background heterzygousity","high heterozygosity"),col=c("yellow","pink","dark red"),pch=c(15,15,15),bty="n",y.intersp=1,cex=1.5)
+legend(0,1,c("background error","above background heterzygousity","high heterozygosity"),col=c("yellow","lightblue","darkblue"),pch=c(15,15,15),bty="n",y.intersp=1,cex=1.5)
 
 dev.off()
 
