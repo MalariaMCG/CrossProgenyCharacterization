@@ -45,13 +45,13 @@ Parental_homozySNPs <- Parental_homozySNPs[order(Parental_homozySNPs[,"CHROM"],a
 ### Count heterozygous calls in matrix
 het_counts <- matrix(0,nrow=length(colnames(Cross_SNPs@gt[,-1])),ncol=1)
 for(j in 2:length(colnames(Cross_SNPs@gt))){
-  het_counts[j-1,1] <- length(which(Parental_homozySNPs[,j+6]=="0/1"|Parental_homozySNPs[,j+6]=="1/0"))
+  het_counts[j-1,1] <- length(which(Parental_homozySNPs[,j+6]=="0/1"|Parental_homozySNPs[,j+6]=="1/0"))/length(which(Parental_homozySNPs[,j+6]=="0/1"|Parental_homozySNPs[,j+6]=="1/0"|Parental_homozySNPs[,j+6]=="1/1"|Parental_homozySNPs[,j+6]=="0/0"))
 }
 
 rownames(het_counts) <- colnames(Cross_SNPs@gt[,-1])
 
 ### histogram of heterozygous call counts
-hist(het_counts,breaks=100,xlab="Number of heterozygous SNPs per progeny",ylab="Counts")
+hist(het_counts,breaks=100,xlab="Proportion of heterozygous SNPs per progeny",ylab="Counts")
 rownames(het_counts)[which(het_counts>700)]
 
 ### Sliding window size of average cross over to look for above average number of mutations
@@ -61,7 +61,7 @@ sliding_window_hetz <- matrix(0,nrow=dim(Parental_homozySNPs)[1]/window_size,nco
 
 for(i in 1:dim(sliding_window_hetz)[1]){
   for(j in 2:length(colnames(Cross_SNPs@gt))){
-    sliding_window_hetz[i,j-1] <- length(which(Parental_homozySNPs[(((i-1)*window_size)+1):(i*window_size),j+6]=="0/1"|Parental_homozySNPs[(((i-1)*window_size)+1):(i*window_size),j+6]=="1/0"))
+    sliding_window_hetz[i,j-1] <- length(which(Parental_homozySNPs[(((i-1)*window_size)+1):(i*window_size),j+6]=="0/1"|Parental_homozySNPs[(((i-1)*window_size)+1):(i*window_size),j+6]=="1/0"))/window_size
   }
 }
 
