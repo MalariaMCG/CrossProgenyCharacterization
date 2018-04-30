@@ -56,7 +56,7 @@ rownames(het_counts)[which(het_counts>700)]
 
 ### Sliding window size of average cross over to look for above average number of mutations
 ### From histogram, take 130 as our average heterozygous error rate for this 
-window_size = 40
+window_size = 50
 sliding_window_hetz <- matrix(0,nrow=dim(Parental_homozySNPs)[1]/window_size,ncol=length(colnames(Cross_SNPs@gt[,-1])))
 
 for(i in 1:dim(sliding_window_hetz)[1]){
